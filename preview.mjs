@@ -1,0 +1,3 @@
+import http from 'node:http';import{readFile,stat}from'node:fs/promises';import{join,extname}from'node:path';
+const root=join(process.cwd(),'dist'),types={'.html':'text/html','.css':'text/css','.js':'application/javascript','.xml':'application/xml','.txt':'text/plain'};
+http.createServer(async(req,res)=>{try{let p=decodeURIComponent(new URL(req.url,'http://x').pathname);if(p==='/')p='/index.html';let f=join(root,p);try{if((await stat(f)).isDirectory())f=join(f,'index.html')}catch{}const b=await readFile(f);res.writeHead(200,{'Content-Type':types[extname(f)]||'application/octet-stream'});res.end(b)}catch{res.writeHead(404);res.end('Not found')}}).listen(8090,'127.0.0.1',()=>console.log('Preview: http://localhost:8090'));
